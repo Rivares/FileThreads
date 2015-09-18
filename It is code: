@@ -1,0 +1,84 @@
+#include "stdafx.h"
+#include sys/types.h>
+#include stdio.h>
+#include ctype.h>
+#include iostream>
+#include thread>
+#include string>
+#include fstream>
+#include vector>
+
+// For disable unsafe function, detail: string.copy(buff, lendth, index to);
+#pragma warning(disable : 4996)
+
+// Handler files:
+void foo(int &Sum, std::string mass[], std::size_t i)
+{
+char buff[50] = {0};
+
+// Cut and show path on screen:
+for (int j = mass[i].length(); j != 0; --j)
+{
+    if ('\\' == mass[i][j])
+    {
+        mass[i].copy(buff, (mass[i].length() - j), j);
+        std::cout << buff << "\n";
+        break;
+    }
+}
+
+// Make file's stream:
+std::ifstream fin(mass[i]);
+
+// Open file on read:
+if (!fin.is_open())
+{
+    std::cout << "Not found file!\n";
+}
+else
+{
+    //  Input from file
+    fin.getline(buff, 50);
+    std::cout << buff << "\n";
+
+    //  Converting value buff:
+    int t = std::stoi(buff, nullptr, 10);
+
+    //  Suming value from files:
+    Sum += t;
+}
+
+fin.close();
+
+}
+int main()
+{
+int Sum = 0; std::string mass[5] = { "\462.txt","\534.txt","\56.txt","\3567.txt","\eragh.txt" };
+std::string plusmass = "C:\Users\Orlangur\Documents\Visual Studio 2015\Projects\ConsoleApplication1\21";
+std::string plus = plusmass;
+
+for (short j = 0; j < 5; j++)
+{
+    plus += mass[j];
+    mass[j] = plus;
+    std::cout << mass[j] << "\n";
+    plus = plusmass;
+}
+
+
+// Make Thread Pool from <vector>:
+std::vector<std::thread> ths;
+std::size_t x;
+std::cout << "\nInput count threads: " << " ";
+std::cin >> x;
+for (std::size_t i = 0; i < x; ++i)
+    ths.push_back(std::thread(&foo, std::ref(Sum), &mass[i], i));      // std::ref() - reference for modification value(Sum)
+
+// Wait end working all threads:
+for (auto & th : ths)
+    th.join();
+
+
+std::cout << "Sum = " << Sum << "\n";
+system("pause");
+return 0;
