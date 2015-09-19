@@ -1,0 +1,59 @@
+#include <QCoreApplication>
+#include <sys/types.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <string>
+#include <iostream>
+#include <thread>
+//#include <boost/filesystem.hpp>
+using namespace std;
+
+
+int main()
+{
+    short i = 0;
+    string mass[50];
+    
+    // Open source folder:
+    DIR *dir = opendir("/home/rivares1853/Desktop/34/21");
+    
+    // If folder exist, then begin monitoring:
+    if (dir)
+    {
+        struct dirent *entry;
+        while ((entry = readdir(dir)) != NULL)
+        {
+            // Delete jump point:
+            if (*(entry->d_name) == '.')
+            {
+                continue;
+            }
+            else
+            {
+                // Record name files in our massiv:
+                mass[i++] = entry->d_name;
+                cout << "\n" << i << ": "<< entry->d_name << entry->d_type <<"\n";
+            }
+        }
+    }
+    else
+    {
+        // Overwise, sent "Error" in error stream:
+        fprintf(stderr, "Error opening directory\n");
+    }
+    // Close folder:
+    closedir(dir);
+
+    cout << "----------------------------\n";
+    
+    // Check on record:
+    short j = i;
+    for (i = 0; i < j; ++i)
+    {
+        cout << mass[i] << "\n";
+    }
+
+
+return 0;
+}
